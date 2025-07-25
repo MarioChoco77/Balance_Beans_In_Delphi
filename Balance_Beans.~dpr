@@ -1,0 +1,13 @@
+program Balance_Beans;
+
+uses
+  Forms,
+  Unidad_Juego in 'Unidad_Juego.pas' {Formulario_Juego};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TFormulario_Juego, Formulario_Juego);
+  Application.Run;
+end.
