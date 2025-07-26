@@ -57,7 +57,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Buttons;
+  Dialogs, StdCtrls, ExtCtrls, Buttons, GraphicEx, MPlayer;
 
 type
   TFormulario_Juego = class(TForm)
@@ -67,23 +67,31 @@ type
     Boton_Reinciar: TBitBtn;
     P_Intentos: TPanel;
     One_Bean: TPanel;
-    Orange_Bean: TShape;
     Num_Rest1: TLabel;
     Two_Beans: TPanel;
-    Yellow_Bean: TShape;
     Num_Rest2: TLabel;
-    Yellow_Bean2: TShape;
     Three_beans: TPanel;
-    Blue_Bean: TShape;
     Num_Rest3: TLabel;
-    Blue_Bean1: TShape;
-    Blue_Bean2: TShape;
     Boton_Girar: TBitBtn;
     Sop: TLabel;
+    Label1: TLabel;
+    Orange_Bean: TImage;
+    Yellow_Bean: TImage;
+    Blue_Bean: TImage;
+    Timer_Carga: TTimer;
+    Main_Music: TMediaPlayer;
+    Timer_Music: TTimer;
+    Sound: TMediaPlayer;
+    Indicadores: TImage;
+    BitBtn1: TBitBtn;
+    Carta: TImage;
+    Estatus: TImage;
     procedure Boton_MatrizClick(Sender: TObject);
     procedure MoldeClick(Sender: TObject);
     procedure One_BeanClick(Sender: TObject);
     procedure Boton_GirarClick(Sender: TObject);
+    procedure Timer_CargaTimer(Sender: TObject);
+    procedure Timer_MusicTimer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -98,9 +106,10 @@ var
   var z : Integer;
   var filas,colum,x,y, i : Integer;
   var PanelClick: TPanel;
-  var PanelAd1 :  TPanel;
+  var PanelAd1, PanelAd2 :  TPanel;
   //i significa numero de intentos
   var OneBe_Selected, TwoBe_Selected, ThreeBe_Selected, horizontal : boolean;
+  var Bal_Izq, Bal_Der, Suma : Integer;
   implementation
 
 uses Math;
@@ -111,6 +120,8 @@ procedure TFormulario_Juego.Boton_MatrizClick(Sender: TObject);
 begin
 inc(i);
 P_Intentos.Caption:= 'Intentos: ' + IntToStr(i);
+Bal_Izq:= 0;
+Bal_Der:= 0;
 z:=0;
 filas:=3;
 colum:=7;
@@ -125,8 +136,18 @@ for x:=0 to filas-1 do begin
     Panel.Left:=Molde.Left + Molde.Width *(y);
     Panel.Top:=Molde.Top + Molde.Height * (x);
     Panel.Font.Size:=14;
+    Panel.Color:=Molde.Color;
+    Panel.BorderStyle:=Molde.BorderStyle;
     Panel.OnClick:=Molde.OnClick;
   end;
+end;
+if i>1 then begin
+for x:=0 to filas-1 do begin
+  for y:=0 to colum-1 do begin
+    Panel:= FindComponent('Panel_'+ IntToStr(x)+'_'+ IntToStr(y)+'_'+IntToStr(i-1)) as TPanel;
+    Panel.Enabled:=False;
+  end;
+end;
 end;
 end;
 
@@ -139,7 +160,7 @@ corY:= StrToInt(PanelClick.name[9]);
 If TwoBe_Selected = true then begin
   if (horizontal = true) and (corY<=5) then begin
     PanelAd1:= FindComponent('Panel_'+ IntToStr(corX)+'_'+ IntToStr(corY+1)+'_'+IntToStr(i)) as TPanel;
-    if PanelAd1.Enabled=False then exit;
+    if (PanelAd1.Enabled=False) then exit;
   end
   else if (horizontal = false) and (corX >=1) then begin
     PanelAd1:= FindComponent('Panel_'+ IntToStr(corX-1)+'_'+ IntToStr(corY)+'_'+IntToStr(i)) as TPanel;
@@ -149,6 +170,16 @@ If TwoBe_Selected = true then begin
     exit;
   end;
   z:=z+1;
+  corY:= (StrToInt(PanelAd1.name[9])+1);
+  case corY of
+    1: Bal_Izq:= Bal_Izq+3  ;
+    2: Bal_Izq:= Bal_Izq+2;
+    3: Bal_Izq:= Bal_Izq+1;
+    4: ;
+    5: Bal_Der:=Bal_Der+1;
+    6: Bal_Der:=Bal_Der+2;
+    7: Bal_Der:=Bal_Der+3;
+    end;
   Shape:=TShape.Create(Self);
   Shape.Parent:= PanelAd1;
   Shape.Name:= 'Bean_'+ IntToStr(Z) + '_'+IntToStr(i);
@@ -161,10 +192,76 @@ If TwoBe_Selected = true then begin
   PanelAd1.Enabled:=false;
 end;
 If ThreeBe_Selected = true then begin
+  if (horizontal = true) and ((corY<=5) and (corY>=1)) then begin
+    PanelAd1:= FindComponent('Panel_'+ IntToStr(corX)+'_'+ IntToStr(corY+1)+'_'+IntToStr(i)) as TPanel;
+    PanelAd2:= FindComponent('Panel_'+ IntToStr(corX)+'_'+ IntToStr(corY-1)+'_'+IntToStr(i)) as TPanel;
+    if (PanelAd1.Enabled=False)  or (PanelAd2.Enabled=false) then exit;
+  end
+  else if (horizontal = false) and (corX = 1) then begin
+    PanelAd1:= FindComponent('Panel_'+ IntToStr(corX-1)+'_'+ IntToStr(corY)+'_'+IntToStr(i)) as TPanel;
+    PanelAd2:= FindComponent('Panel_'+ IntToStr(corX+1)+'_'+ IntToStr(corY)+'_'+IntToStr(i)) as TPanel;
+    if (PanelAd1.Enabled=False) or (PanelAd2.Enabled=false) then exit;
+  end
+  else begin
+    exit;
+  end;
+  z:=z+1;
+  for x:=1 to 2 do begin
+      if x=1 then begin
+      corY:= (StrToInt(PanelAd1.name[9])+1);
+      end
+      else begin
+      corY:= (StrToInt(PanelAd2.name[9])+1);
+      end;
+    case corY of
+    1: Bal_Izq:= Bal_Izq+3  ;
+    2: Bal_Izq:= Bal_Izq+2;
+    3: Bal_Izq:= Bal_Izq+1;
+    4: ;
+    5: Bal_Der:=Bal_Der+1;
+    6: Bal_Der:=Bal_Der+2;
+    7: Bal_Der:=Bal_Der+3;
+    end;
+  end;
+  Shape:=TShape.Create(Self);
+  Shape.Parent:= PanelAd1;
+  Shape.Name:= 'Bean_'+ IntToStr(Z) + '_'+IntToStr(i);
+  Shape.Width:= Bean.Width;
+  Shape.Height:= Bean.Height;
+  Shape.Shape:=Bean.Shape;
+  Shape.Top:= 8;
+  Shape.Left:=8;
+  Shape.Brush.Color:= clskyblue;
+  PanelAd1.Enabled:=false;
 
+  z:=z+1;
+  Shape:=TShape.Create(Self);
+  Shape.Parent:= PanelAd2;
+  Shape.Name:= 'Bean_'+ IntToStr(Z) + '_'+IntToStr(i);
+  Shape.Width:= Bean.Width;
+  Shape.Height:= Bean.Height;
+  Shape.Shape:=Bean.Shape;
+  Shape.Top:= 8;
+  Shape.Left:=8;
+  Shape.Brush.Color:= clskyblue;
+  PanelAd2.Enabled:=false;
 end;
 
 if (OneBe_Selected = true) or (TwoBe_Selected = true) or (ThreeBe_Selected =true) then begin
+Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Put_On.aiff');
+Sound.Open;
+Sound.Play;
+//If StrToInt(PanelClick.Name[9]) = 0 then Suma
+corY:= (StrToInt(PanelClick.name[9])+1);
+case corY of
+  1: Bal_Izq:= Bal_Izq+3;
+  2: Bal_Izq:= Bal_Izq+2;
+  3: Bal_Izq:= Bal_Izq+1;
+  4: ;
+  5: Bal_Der:=Bal_Der+1;
+  6: Bal_Der:=Bal_Der+2;
+  7: Bal_Der:=Bal_Der+3;
+end;
 z:=z+1;
 Shape:=TShape.Create(Self);
 Shape.Parent:= Sender as TPanel;
@@ -183,18 +280,22 @@ Sop.Caption:=IntToStr(corX) + '_' +  IntToStr(corY);
 end;
 If TwoBe_Selected = true then begin
 Shape.Brush.Color:= Clyellow;
+Sop.Caption:=IntToStr(corX) + '_' +  IntToStr(corY);
 end;
 If ThreeBe_Selected = true then begin
 Shape.Brush.Color:= clskyblue;
 end;
+Label1.Caption:= IntToStr(bal_izq-Bal_Der);
 end;
 
 
 procedure TFormulario_Juego.One_BeanClick(Sender: TObject);
 begin
-PanelClick:= Sender as TPanel;
-PanelClick.Color:=clactiveBorder;
-if(sender = One_Bean) then begin
+Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Select.wav');
+Sound.Open;
+Sound.Play;
+if(sender = One_Bean) or (sender =Num_Rest1) or (Sender = Orange_Bean) then begin
+One_Bean.Color:=clactiveBorder;
 OneBe_Selected := true;
 TwoBe_Selected := false;
 Two_Beans.Color:= clBtnFace;
@@ -202,7 +303,8 @@ Three_beans.Color:= clBtnFace;
 ThreeBe_Selected := false;
 end;
 
-if(sender = Two_Beans) then begin
+if(sender = Two_Beans) or (sender =Num_Rest2) or (Sender = Yellow_Bean) then begin
+Two_Beans.Color:=clactiveBorder;
 OneBe_Selected := false;
 TwoBe_Selected := true;
 One_Bean.Color:= clBtnFace;
@@ -210,7 +312,8 @@ Three_beans.Color:= clBtnFace;
 ThreeBe_Selected := false;
 end;
 
-if(sender = Three_beans) then begin
+if(sender = Three_beans) or (sender =Num_Rest3) or (Sender = Blue_Bean) then begin
+Three_Beans.Color:=clactiveBorder;
 OneBe_Selected := false;
 TwoBe_Selected := false;
 Two_Beans.Color:= clBtnFace;
@@ -221,6 +324,9 @@ end;
 
 procedure TFormulario_Juego.Boton_GirarClick(Sender: TObject);
 begin
+Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Rotar.mp3');
+Sound.Open;
+Sound.Play;
 If horizontal = false then begin
 horizontal:= true;
 Boton_Girar.Caption:= 'Vertical';
@@ -232,5 +338,22 @@ end;
 end;
 
 
+
+procedure TFormulario_Juego.Timer_CargaTimer(Sender: TObject);
+begin
+Orange_Bean.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Orange_Bean.png');
+Yellow_Bean.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Yellow_Beans.png');
+Blue_Bean.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Blue_Beans.png');
+Indicadores.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/indicadores.png');
+Timer_Carga.Enabled:=false;
+end;
+
+procedure TFormulario_Juego.Timer_MusicTimer(Sender: TObject);
+begin
+Main_Music.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Game_Song.mp3');
+Main_Music.Open;
+Main_Music.Play;
+Timer_Music.Interval:= 135000;
+end;
 
 end.
