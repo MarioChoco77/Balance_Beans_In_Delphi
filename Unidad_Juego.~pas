@@ -83,12 +83,20 @@ type
     Timer_Music: TTimer;
     Sound: TMediaPlayer;
     Indicadores: TImage;
+    BitBtn1: TBitBtn;
+    Carta: TImage;
+    Estatus: TImage;
+    Panel_Victoria: TPanel;
+    Timer_Finalizado: TTimer;
     procedure Boton_MatrizClick(Sender: TObject);
     procedure MoldeClick(Sender: TObject);
     procedure One_BeanClick(Sender: TObject);
     procedure Boton_GirarClick(Sender: TObject);
     procedure Timer_CargaTimer(Sender: TObject);
     procedure Timer_MusicTimer(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure Timer_FinalizadoTimer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -99,17 +107,18 @@ var
   Formulario_Juego: TFormulario_Juego;
   Panel:TPanel;
   Shape : TShape;
-  var corX,corY : Integer;
-  var z : Integer;
-  var filas,colum,x,y, i : Integer;
-  var PanelClick: TPanel;
-  var PanelAd1, PanelAd2 :  TPanel;
+  corX,corY : Integer;
+  z : Integer;
+  filas,colum,x,y, i : Integer;
+  PanelClick: TPanel;
+  PanelAd1, PanelAd2, PanelE :  TPanel;
   //i significa numero de intentos
-  var OneBe_Selected, TwoBe_Selected, ThreeBe_Selected, horizontal : boolean;
-  var Bal_Izq, Bal_Der, Suma : Integer;
+  OneBe_Selected, TwoBe_Selected, ThreeBe_Selected, horizontal : boolean;
+  Bal_Izq, Bal_Der, Suma : Integer;
+  Cant_One, Cant_Two, Cant_Three : Integer;
   implementation
 
-uses Math;
+uses Math, Unidad_MenuPrincipal;
 
 {$R *.dfm}
 
@@ -146,7 +155,101 @@ for x:=0 to filas-1 do begin
   end;
 end;
 end;
+Panel:= FindComponent('Panel_'+ IntToStr(1)+'_'+ IntToStr(2)+'_'+IntToStr(i)) as TPanel;
+
+case Menu_Principal.Selec_Dificultad.ItemIndex of
+    0:begin
+        Bal_Izq:=3;
+        Carta.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Carta_Easy.png');
+        Cant_Three:=2;
+      end;
+    1:begin
+        Bal_Izq:=2;
+        Carta.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Carta_Medium.png');
+        Cant_Three:=2;
+        Cant_Two:=1;
+      end;
+    2:begin
+        Bal_Izq:=4;
+        Carta.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Carta_Hard.png');
+        Cant_Three:=2;
+        Cant_One:=1;
+      end;
+    3:begin
+        Bal_Izq:=0;
+        Carta.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Carta_SuperHard.png');
+        Cant_Three:=2;
+        Cant_Two:=2;
+      end;
 end;
+Num_Rest1.Caption:=IntToStr(Cant_One);
+Num_Rest2.Caption:=IntToStr(Cant_Two);
+Num_Rest3.Caption:=IntToStr(Cant_Three);
+
+
+if Cant_One=0 then begin
+One_Bean.Enabled:=false;
+One_Bean.Color:=clActiveBorder;
+end
+else begin
+One_Bean.Color:= clBtnFace;
+One_Bean.Enabled:=True;
+end;
+if Cant_Two=0 then begin
+Two_Beans.Enabled:=false;
+Two_Beans.Color:=clActiveBorder;
+end
+else begin
+Two_Beans.Color:= clBtnFace;
+Two_Beans.Enabled:=True;
+end;
+if Cant_Three=0 then begin
+Three_beans.Enabled:=false;
+Three_beans.Color:=clActiveBorder;
+end
+else begin
+Three_beans.Color:= clBtnFace;
+Three_beans.Enabled:=true;
+end;
+
+for x:=0 to filas-1 do begin
+      for y:=0 to colum-1 do begin
+        if (Menu_Principal.Selec_Dificultad.ItemIndex = 0) then begin
+          if (y=3) or (((y=2)or (y=1)) and (x=1)) then begin
+            Panel:= FindComponent('Panel_'+ IntToStr(x)+'_'+ IntToStr(y)+'_'+IntToStr(i)) as TPanel;
+          end;
+        end;
+        if (Menu_Principal.Selec_Dificultad.ItemIndex = 1) then begin
+          if (y=2) or (((y=1) or (y=4) or (y=5)) and (x=1)) then begin
+            Panel:= FindComponent('Panel_'+ IntToStr(x)+'_'+ IntToStr(y)+'_'+IntToStr(i)) as TPanel;
+          end;
+        end;
+        if (Menu_Principal.Selec_Dificultad.ItemIndex = 2) then begin
+          if (y=2) or (((y=2) or (y=3) or (y=4)) and (x=2)) or ((y=1) and (x=0)) then begin
+            Panel:= FindComponent('Panel_'+ IntToStr(x)+'_'+ IntToStr(y)+'_'+IntToStr(i)) as TPanel;
+          end;
+        end;
+        if (Menu_Principal.Selec_Dificultad.ItemIndex = 3) then begin
+          if (y=2) or (((y=1) or (y=5) or (y=6)) and (x=1)) then begin
+            Panel:= FindComponent('Panel_'+ IntToStr(x)+'_'+ IntToStr(y)+'_'+IntToStr(i)) as TPanel;
+          end;
+        end;
+        z:=z+1;
+        Shape:=TShape.Create(Self);
+        Shape.Parent:= Panel;
+        Shape.Name:= 'Bean_'+ IntToStr(Z) + '_'+IntToStr(i);
+        Shape.Width:= Bean.Width;
+        Shape.Height:= Bean.Height;
+        Shape.Shape:=Bean.Shape;
+        Shape.Brush.Color:=ClRed;
+        Shape.Top:= 8;
+        Shape.Left:=8;
+        Panel.Enabled:=false;
+      end;
+    end;
+end;
+
+
 
 procedure TFormulario_Juego.MoldeClick(Sender: TObject);
 begin
@@ -169,7 +272,7 @@ If TwoBe_Selected = true then begin
   z:=z+1;
   corY:= (StrToInt(PanelAd1.name[9])+1);
   case corY of
-    1: Bal_Izq:= Bal_Izq+3  ;
+    1: Bal_Izq:= Bal_Izq+3;
     2: Bal_Izq:= Bal_Izq+2;
     3: Bal_Izq:= Bal_Izq+1;
     4: ;
@@ -187,6 +290,7 @@ If TwoBe_Selected = true then begin
   Shape.Left:=8;
   Shape.Brush.Color:= Clyellow;
   PanelAd1.Enabled:=false;
+  Cant_Two:=Cant_Two-1;
 end;
 If ThreeBe_Selected = true then begin
   if (horizontal = true) and ((corY<=5) and (corY>=1)) then begin
@@ -211,7 +315,7 @@ If ThreeBe_Selected = true then begin
       corY:= (StrToInt(PanelAd2.name[9])+1);
       end;
     case corY of
-    1: Bal_Izq:= Bal_Izq+3  ;
+    1: Bal_Izq:= Bal_Izq+3;
     2: Bal_Izq:= Bal_Izq+2;
     3: Bal_Izq:= Bal_Izq+1;
     4: ;
@@ -230,6 +334,7 @@ If ThreeBe_Selected = true then begin
   Shape.Left:=8;
   Shape.Brush.Color:= clskyblue;
   PanelAd1.Enabled:=false;
+  Cant_Three:=Cant_Three-1;
 
   z:=z+1;
   Shape:=TShape.Create(Self);
@@ -274,6 +379,7 @@ end;
 If OneBe_Selected = true then begin
 Shape.Brush.Color:= $000080FF;
 Sop.Caption:=IntToStr(corX) + '_' +  IntToStr(corY);
+Cant_One:=Cant_One-1;
 end;
 If TwoBe_Selected = true then begin
 Shape.Brush.Color:= Clyellow;
@@ -283,6 +389,29 @@ If ThreeBe_Selected = true then begin
 Shape.Brush.Color:= clskyblue;
 end;
 Label1.Caption:= IntToStr(bal_izq-Bal_Der);
+
+Suma:=Bal_Izq-Bal_Der;
+if suma=0 then Estatus.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Estado_Balanceado.png');
+if suma<0 then Estatus.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Estado_DesbalanceadoDer.png');
+if suma>0 then Estatus.Picture.LoadFromFile(ExtractFilePath(Application.ExeName)+'Imagenes/Estado_DesbalanceadoIzq.png');
+
+Num_Rest1.Caption:=IntToStr(Cant_One);
+Num_Rest2.Caption:=IntToStr(Cant_Two);
+Num_Rest3.Caption:=IntToStr(Cant_Three);
+
+if Cant_One=0 then begin
+One_Bean.Enabled:=false;
+One_Bean.Color:=clActiveBorder;
+end;
+if Cant_Two=0 then begin
+Two_Beans.Enabled:=false;
+Two_Beans.Color:=clActiveBorder;
+end;
+if Cant_Three=0 then begin
+Three_beans.Enabled:=false;
+Three_beans.Color:=clActiveBorder;
+end;
+
 end;
 
 
@@ -295,8 +424,8 @@ if(sender = One_Bean) or (sender =Num_Rest1) or (Sender = Orange_Bean) then begi
 One_Bean.Color:=clactiveBorder;
 OneBe_Selected := true;
 TwoBe_Selected := false;
-Two_Beans.Color:= clBtnFace;
-Three_beans.Color:= clBtnFace;
+if Cant_Two > 0 then Two_Beans.Color:= clBtnFace;
+if Cant_Three > 0 then Three_beans.Color:= clBtnFace;
 ThreeBe_Selected := false;
 end;
 
@@ -304,8 +433,8 @@ if(sender = Two_Beans) or (sender =Num_Rest2) or (Sender = Yellow_Bean) then beg
 Two_Beans.Color:=clactiveBorder;
 OneBe_Selected := false;
 TwoBe_Selected := true;
-One_Bean.Color:= clBtnFace;
-Three_beans.Color:= clBtnFace;
+if Cant_One > 0 then One_Bean.Color:= clBtnFace;
+if Cant_Three > 0 then Three_beans.Color:= clBtnFace;
 ThreeBe_Selected := false;
 end;
 
@@ -313,8 +442,8 @@ if(sender = Three_beans) or (sender =Num_Rest3) or (Sender = Blue_Bean) then beg
 Three_Beans.Color:=clactiveBorder;
 OneBe_Selected := false;
 TwoBe_Selected := false;
-Two_Beans.Color:= clBtnFace;
-One_bean.Color:= clBtnFace;
+if Cant_Two > 0 then Two_Beans.Color:= clBtnFace;
+if Cant_One > 0 then One_bean.Color:= clBtnFace;
 ThreeBe_Selected :=true;
 end;
 end;
@@ -351,6 +480,44 @@ Main_Music.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Game_Song.mp
 Main_Music.Open;
 Main_Music.Play;
 Timer_Music.Interval:= 135000;
+end;
+
+procedure TFormulario_Juego.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+i:=0;
+z:=0;
+Menu_Principal.Timer_MusicaMenu.Interval:= 5;
+Menu_Principal.Timer_MusicaMenu.Enabled:=True;
+Cant_One:=0;
+Cant_Two:=0;
+Cant_Three:=0;
+Formulario_Juego.Destroy;
+end;
+
+procedure TFormulario_Juego.BitBtn1Click(Sender: TObject);
+begin
+if (Cant_One = 0) and (Cant_Two = 0) and (Cant_Three = 0) and (Suma = 0) then begin
+Timer_Finalizado.Enabled:=True;
+Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/celebrate.wav');
+Sound.Open;
+Sound.Play;
+Main_Music.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/win.mp3');
+Main_Music.Open;
+Main_Music.Play;
+Panel_Victoria.Visible:=true;
+end
+else begin
+Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/risa.wav');
+Sound.Open;
+Sound.Play;
+end;
+end;
+
+procedure TFormulario_Juego.Timer_FinalizadoTimer(Sender: TObject);
+begin
+Panel_Victoria.Visible:=false;
+close;
 end;
 
 end.
