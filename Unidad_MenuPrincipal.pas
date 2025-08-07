@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, GraphicEx, ExtCtrls, MPlayer, Menus, StdCtrls;
+  Dialogs, GraphicEx, ExtCtrls, MPlayer, Menus, StdCtrls, Buttons;
 
 type
   TMenu_Principal = class(TForm)
@@ -17,10 +17,21 @@ type
     Boton_Creditos: TPanel;
     Boton_Salir: TPanel;
     Selec_Dificultad: TComboBox;
+    Panel_Creditos: TPanel;
+    Label1: TLabel;
+    Molde_Creditos: TLabel;
+    Timer_Creditos: TTimer;
+    Timer_Subida: TTimer;
+    BitBtn1: TBitBtn;
     procedure Timer_Carga1Timer(Sender: TObject);
     procedure Timer_MusicaMenuTimer(Sender: TObject);
     procedure Boton_SalirClick(Sender: TObject);
     procedure Boton_EmpezarClick(Sender: TObject);
+    procedure Boton_CreditosClick(Sender: TObject);
+    procedure Timer_CreditosTimer(Sender: TObject);
+    procedure Timer_SubidaTimer(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -29,6 +40,23 @@ type
 
 var
   Menu_Principal: TMenu_Principal;
+  Credito : TLabel;
+  x : Integer;
+  creditos: array[1..13] of string = (
+    'Iniciando créditos épicos...',
+    'Dirección general: Angel Martínez',
+    'Dirección artística: Angel Martínez (otra vez)',
+    'Producción ejecutiva: Angel Martínez (¿quién más?)',
+    'Guión: Ángel Martínez (con ayuda de sus alucinaciones)',
+    'Música original: Una playlist de YouTube que se me olvido cerrar',
+    'Diseño de sonido: El ventilador de la compu y uno que otro clic',
+    'Diseño de niveles: Angel Martínez (con inspiración divina)',
+    'Pruebas de juego: Angel Martínez jugando solo a las 3AM',
+    'Inspirado en el juego "Balance Beans" de ThinkFun (gracias por existir)',
+    'Créditos y derechos reservados: ThinkFun (no queremos demandas ??)',
+    'Efectos especiales: Un par de líneas de código que casi no crashearon',
+    'Agradecimientos especiales: A ti, sí tú, por jugar este juego'
+  );
 
 implementation
 
@@ -68,6 +96,50 @@ end
 else begin
 Application.MessageBox('Seleccione una Dificultad','Error',MB_ICONERROR+ MB_OK)
 end;
+end;
+
+procedure TMenu_Principal.Boton_CreditosClick(Sender: TObject);
+begin
+Timer_Creditos.Enabled:=true;
+Panel_Creditos.Visible:=true;
+Timer_MusicaMenu.Enabled:=false;
+Music_Menu.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Balance beans!1.mp3');
+Music_Menu.Open;
+Music_Menu.Play;
+Timer_Subida.Enabled:=true;
+Molde_Creditos.Caption:=Creditos[1];
+x:=1;
+end;
+
+procedure TMenu_Principal.Timer_CreditosTimer(Sender: TObject);
+begin
+Panel_Creditos.Visible:=false;
+Timer_MusicaMenu.Interval:=5;
+Timer_MusicaMenu.Enabled:= true;
+end;
+
+procedure TMenu_Principal.Timer_SubidaTimer(Sender: TObject);
+begin
+Molde_Creditos.Top:=Molde_Creditos.Top-2;
+if (Molde_Creditos.Top=0-Molde_Creditos.Height) then begin
+x:=x+1;
+Molde_Creditos.Top:= 350;
+Molde_Creditos.Caption:= creditos[x];
+end;
+end;
+
+procedure TMenu_Principal.BitBtn1Click(Sender: TObject);
+begin
+Panel_Creditos.Visible:=false;
+Timer_MusicaMenu.Interval:=5;
+Timer_MusicaMenu.Enabled:= true;
+Molde_Creditos.Top:= 350;
+end;
+
+procedure TMenu_Principal.FormCreate(Sender: TObject);
+begin
+Panel_Creditos.Top:= 40;
+Panel_Creditos.Left:=132;
 end;
 
 end.

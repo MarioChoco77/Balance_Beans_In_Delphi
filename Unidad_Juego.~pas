@@ -489,6 +489,7 @@ i:=0;
 z:=0;
 Menu_Principal.Timer_MusicaMenu.Interval:= 5;
 Menu_Principal.Timer_MusicaMenu.Enabled:=True;
+horizontal:=false;
 Cant_One:=0;
 Cant_Two:=0;
 Cant_Three:=0;
@@ -505,7 +506,7 @@ Sound.Play;
 Main_Music.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/win.mp3');
 Main_Music.Open;
 Main_Music.Play;
-Panel_Victoria.Visible:=true;
+Panel_Victoria.BringToFront;
 end
 else begin
 Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/risa.wav');

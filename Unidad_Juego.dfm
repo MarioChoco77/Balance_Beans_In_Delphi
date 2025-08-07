@@ -3,7 +3,7 @@ object Formulario_Juego: TFormulario_Juego
   Top = 134
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'Formulario_Juego'
+  Caption = 'Balance Beans!'
   ClientHeight = 582
   ClientWidth = 908
   Color = clBtnFace
@@ -38,6 +38,7 @@ object Formulario_Juego: TFormulario_Juego
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
+    Visible = False
   end
   object Label1: TLabel
     Left = 122
@@ -45,6 +46,7 @@ object Formulario_Juego: TFormulario_Juego
     Width = 32
     Height = 13
     Caption = 'Label1'
+    Visible = False
   end
   object Indicadores: TImage
     Left = 72

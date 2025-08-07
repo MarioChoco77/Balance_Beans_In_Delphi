@@ -47914,6 +47914,8 @@ object Formulario_Juego: TFormulario_Juego
     Font.Name = 'Myanmar Text'
     Font.Style = []
     ParentFont = False
+    ParentShowHint = False
+    ShowHint = False
     TabOrder = 11
   end
   object Timer_Carga: TTimer
@@ -47931,7 +47933,7 @@ object Formulario_Juego: TFormulario_Juego
   end
   object Timer_Finalizado: TTimer
     Enabled = False
-    Interval = 2500
+    Interval = 2700
     OnTimer = Timer_FinalizadoTimer
     Left = 122
     Top = 546
