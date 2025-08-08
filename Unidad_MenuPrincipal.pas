@@ -100,6 +100,9 @@ end;
 
 procedure TMenu_Principal.Boton_CreditosClick(Sender: TObject);
 begin
+Boton_Empezar.Enabled:=false;
+Boton_Creditos.Enabled:=false;
+Boton_Salir.Enabled:=false;
 Timer_Creditos.Enabled:=true;
 Panel_Creditos.Visible:=true;
 Timer_MusicaMenu.Enabled:=false;
@@ -116,6 +119,9 @@ begin
 Panel_Creditos.Visible:=false;
 Timer_MusicaMenu.Interval:=5;
 Timer_MusicaMenu.Enabled:= true;
+Boton_Empezar.Enabled:=true;
+Boton_Creditos.Enabled:=true;
+Boton_Salir.Enabled:=true;
 end;
 
 procedure TMenu_Principal.Timer_SubidaTimer(Sender: TObject);
@@ -134,6 +140,9 @@ Panel_Creditos.Visible:=false;
 Timer_MusicaMenu.Interval:=5;
 Timer_MusicaMenu.Enabled:= true;
 Molde_Creditos.Top:= 350;
+Boton_Empezar.Enabled:=true;
+Boton_Creditos.Enabled:=true;
+Boton_Salir.Enabled:=true;
 end;
 
 procedure TMenu_Principal.FormCreate(Sender: TObject);

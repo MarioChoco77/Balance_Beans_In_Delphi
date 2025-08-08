@@ -10,6 +10,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Balance Beans!';
   Application.CreateForm(TMenu_Principal, Menu_Principal);
   Application.CreateForm(TForm1, Form1);
   Application.Run;

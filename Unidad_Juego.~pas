@@ -124,6 +124,7 @@ uses Math, Unidad_MenuPrincipal;
 
 procedure TFormulario_Juego.Boton_MatrizClick(Sender: TObject);
 begin
+Menu_Principal.Visible:=false;
 inc(i);
 P_Intentos.Caption:= 'Intentos: ' + IntToStr(i);
 Bal_Izq:= 0;
@@ -257,7 +258,7 @@ PanelClick:= Sender as TPanel;
 corX:= StrToInt(PanelClick.name[7]);
 corY:= StrToInt(PanelClick.name[9]);
 
-If TwoBe_Selected = true then begin
+If (TwoBe_Selected = true) and (Cant_Two>0) then begin
   if (horizontal = true) and (corY<=5) then begin
     PanelAd1:= FindComponent('Panel_'+ IntToStr(corX)+'_'+ IntToStr(corY+1)+'_'+IntToStr(i)) as TPanel;
     if (PanelAd1.Enabled=False) then exit;
@@ -290,9 +291,8 @@ If TwoBe_Selected = true then begin
   Shape.Left:=8;
   Shape.Brush.Color:= Clyellow;
   PanelAd1.Enabled:=false;
-  Cant_Two:=Cant_Two-1;
 end;
-If ThreeBe_Selected = true then begin
+If (ThreeBe_Selected = true) and (Cant_Three>0) then begin
   if (horizontal = true) and ((corY<=5) and (corY>=1)) then begin
     PanelAd1:= FindComponent('Panel_'+ IntToStr(corX)+'_'+ IntToStr(corY+1)+'_'+IntToStr(i)) as TPanel;
     PanelAd2:= FindComponent('Panel_'+ IntToStr(corX)+'_'+ IntToStr(corY-1)+'_'+IntToStr(i)) as TPanel;
@@ -334,7 +334,6 @@ If ThreeBe_Selected = true then begin
   Shape.Left:=8;
   Shape.Brush.Color:= clskyblue;
   PanelAd1.Enabled:=false;
-  Cant_Three:=Cant_Three-1;
 
   z:=z+1;
   Shape:=TShape.Create(Self);
@@ -349,7 +348,7 @@ If ThreeBe_Selected = true then begin
   PanelAd2.Enabled:=false;
 end;
 
-if (OneBe_Selected = true) or (TwoBe_Selected = true) or (ThreeBe_Selected =true) then begin
+if ((OneBe_Selected = true) and (Cant_One>0)) or ((TwoBe_Selected = true) and (Cant_Two>0)) or ((ThreeBe_Selected =true) and(Cant_Three>0 )) then begin
 Sound.FileName:= (ExtractFilePath(Application.ExeName)+'Sounds/Put_On.aiff');
 Sound.Open;
 Sound.Play;
@@ -376,17 +375,19 @@ Shape.Left:=8;
 PanelClick.Enabled:=false;
 end;
 
-If OneBe_Selected = true then begin
+If (OneBe_Selected = true) and (Cant_One>0) then begin
 Shape.Brush.Color:= $000080FF;
 Sop.Caption:=IntToStr(corX) + '_' +  IntToStr(corY);
 Cant_One:=Cant_One-1;
 end;
-If TwoBe_Selected = true then begin
+If (TwoBe_Selected = true) and (Cant_Two>0) then begin
 Shape.Brush.Color:= Clyellow;
 Sop.Caption:=IntToStr(corX) + '_' +  IntToStr(corY);
+Cant_Two:=Cant_Two-1;
 end;
-If ThreeBe_Selected = true then begin
+If (ThreeBe_Selected = true) and (Cant_Three >0) then begin
 Shape.Brush.Color:= clskyblue;
+Cant_Three:=Cant_Three-1;
 end;
 Label1.Caption:= IntToStr(bal_izq-Bal_Der);
 
@@ -485,6 +486,7 @@ end;
 procedure TFormulario_Juego.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
+Menu_Principal.Visible:=true;
 i:=0;
 z:=0;
 Menu_Principal.Timer_MusicaMenu.Interval:= 5;

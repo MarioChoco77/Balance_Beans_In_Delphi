@@ -16,6 +16,7 @@ object Formulario_Juego: TFormulario_Juego
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = Boton_MatrizClick
+  OnMouseMove = FormMouseMove
   PixelsPerInch = 96
   TextHeight = 13
   object Bean: TShape
@@ -47665,6 +47666,7 @@ object Formulario_Juego: TFormulario_Juego
     TabOrder = 0
     Visible = False
     OnClick = MoldeClick
+    OnMouseMove = MoldeMouseMove
   end
   object Boton_Matriz: TButton
     Left = 27

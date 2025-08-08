@@ -1,11 +1,11 @@
 object Menu_Principal: TMenu_Principal
-  Left = 179
-  Top = 166
+  Left = 482
+  Top = 267
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Balance Beans!'
   ClientHeight = 473
-  ClientWidth = 861
+  ClientWidth = 834
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -108,9 +108,9 @@ object Menu_Principal: TMenu_Principal
       'Muy dificil')
   end
   object Panel_Creditos: TPanel
-    Left = 908
-    Top = 160
-    Width = 636
+    Left = 1008
+    Top = 32
+    Width = 641
     Height = 377
     Align = alCustom
     Color = clScrollBar
