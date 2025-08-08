@@ -129,6 +129,9 @@ uses Math, Unidad_MenuPrincipal;
 
 procedure TFormulario_Juego.Boton_MatrizClick(Sender: TObject);
 begin
+OneBe_Selected:= FALSE;
+TwoBe_Selected:= FALSE;
+ThreeBe_Selected:=FALSE;
 Menu_Principal.Visible:=false;
 inc(i);
 P_Intentos.Caption:= 'Intentos: ' + IntToStr(i);

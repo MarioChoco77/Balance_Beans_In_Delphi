@@ -97,6 +97,10 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BitBtn1Click(Sender: TObject);
     procedure Timer_FinalizadoTimer(Sender: TObject);
+    procedure MoldeMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
   private
     { Private declarations }
   public
@@ -107,6 +111,7 @@ var
   Formulario_Juego: TFormulario_Juego;
   Panel:TPanel;
   Shape : TShape;
+  CursorHandle: HCursor;
   corX,corY : Integer;
   z : Integer;
   filas,colum,x,y, i : Integer;
@@ -146,6 +151,7 @@ for x:=0 to filas-1 do begin
     Panel.Color:=Molde.Color;
     Panel.BorderStyle:=Molde.BorderStyle;
     Panel.OnClick:=Molde.OnClick;
+    Panel.OnMouseMove:=Molde.OnMouseMove;
   end;
 end;
 if i>1 then begin
@@ -521,6 +527,37 @@ procedure TFormulario_Juego.Timer_FinalizadoTimer(Sender: TObject);
 begin
 Panel_Victoria.Visible:=false;
 close;
+end;
+
+procedure TFormulario_Juego.MoldeMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+if (OneBe_Selected = true) and (Cant_One > 0) then begin
+CursorHandle := LoadCursorFromFile(PChar(ExtractFilePath(Application.ExeName)+'Cursores/One_Orange_Bean.cur'));
+Screen.Cursors[1] := CursorHandle;
+Screen.Cursor := 1;
+end;
+
+if (TwoBe_Selected = true) and (Cant_Two > 0) then begin
+  if horizontal = true then CursorHandle := LoadCursorFromFile(PChar(ExtractFilePath(Application.ExeName)+'Cursores/Two_Yellow_Bean_Horizontal.cur'));
+  if horizontal = false then CursorHandle := LoadCursorFromFile(PChar(ExtractFilePath(Application.ExeName)+'Cursores/Two_Yellow_Bean_Vertical.cur'));
+Screen.Cursors[2] := CursorHandle;
+Screen.Cursor := 2;
+end;
+
+if (ThreeBe_Selected = true) and (Cant_Three > 0) then begin
+  if horizontal = true then CursorHandle := LoadCursorFromFile(PChar(ExtractFilePath(Application.ExeName)+'Cursores/Three_Blue_Bean_Horizontal.cur'));
+  if horizontal = false then CursorHandle := LoadCursorFromFile(PChar(ExtractFilePath(Application.ExeName)+'Cursores/Three_Blue_Bean_Vertical.cur'));
+Screen.Cursors[3] := CursorHandle;
+Screen.Cursor := 3;
+end;
+
+end;
+
+procedure TFormulario_Juego.FormMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+Screen.Cursor:=0;
 end;
 
 end.

@@ -47,7 +47,7 @@ var
     'Dirección general: Angel Martínez',
     'Dirección artística: Angel Martínez (otra vez)',
     'Producción ejecutiva: Angel Martínez (¿quién más?)',
-    'Guión: Ángel Martínez (con ayuda de sus alucinaciones)',
+    'Guión: Angel Martínez (con ayuda de alucinaciones)',
     'Música original: Una playlist de YouTube que se me olvido cerrar',
     'Diseño de sonido: El ventilador de la compu y uno que otro clic',
     'Diseño de niveles: Angel Martínez (con inspiración divina)',

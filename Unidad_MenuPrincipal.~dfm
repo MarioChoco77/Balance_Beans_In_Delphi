@@ -1,6 +1,6 @@
 object Menu_Principal: TMenu_Principal
-  Left = 499
-  Top = 176
+  Left = 482
+  Top = 267
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Balance Beans!'
